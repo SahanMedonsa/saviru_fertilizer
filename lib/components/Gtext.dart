@@ -43,8 +43,8 @@ class Gtextfd extends StatelessWidget {
     return Text(text,
         style: TextStyle(
             color: ColorPalette.appBar_color,
-            fontSize: 16,
-            fontWeight: FontWeight.w400));
+            fontSize: 18,
+            fontWeight: FontWeight.w600));
   }
 }
 

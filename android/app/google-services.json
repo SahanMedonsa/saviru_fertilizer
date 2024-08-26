@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "687457787341",
+    "firebase_url": "https://saviru-gov-default-rtdb.firebaseio.com",
+    "project_id": "saviru-gov",
+    "storage_bucket": "saviru-gov.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687457787341:android:68a83984794bca0c48f884",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRR9Hbu_s8S1qKEdpW85cZu8GGNg0ij3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687457787341:android:924e5cea4c1f1a8e48f884",
+        "android_client_info": {
+          "package_name": "com.example.collector"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRR9Hbu_s8S1qKEdpW85cZu8GGNg0ij3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687457787341:android:b3403b74391613d248f884",
+        "android_client_info": {
+          "package_name": "com.example.farmerapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRR9Hbu_s8S1qKEdpW85cZu8GGNg0ij3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687457787341:android:79ccb3618c064b7948f884",
+        "android_client_info": {
+          "package_name": "com.example.saviru_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRR9Hbu_s8S1qKEdpW85cZu8GGNg0ij3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
