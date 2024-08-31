@@ -1,4 +1,7 @@
+import 'package:fertilizerapp/components/Gtext.dart';
+import 'package:fertilizerapp/service/farmer_db_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class BillingScreen extends StatefulWidget {
   final String farmerId;
@@ -10,18 +13,83 @@ class BillingScreen extends StatefulWidget {
   State<BillingScreen> createState() => _BillingScreenState();
 }
 
-
 class _BillingScreenState extends State<BillingScreen> {
-  final List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-  String dropdownValue = 'One'; // Initialize dropdown with the first item in the list
- 
-
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   double _calculatedTotal = 0.0;
+  String? selectedfertilizer;
+  List<Map<String, dynamic>> savedCollections = [];
 
-    String selectedGrade = 'A';
+  final FarmerDatabaseServices farmerDatabaseServices = FarmerDatabaseServices();
 
+  @override
+  void initState() {
+    super.initState();
+    _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _fetchSavedCollections(); // Fetch data on initialization
+  }
+
+  void _showAlertDialog(String message, bool success) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(success ? 'Success' : 'Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _clear() {
+    _amountController.clear();
+    _priceController.clear();
+    _dateController.clear();
+    selectedfertilizer = null;
+    _calculatedTotal = 0.0;
+  }
+
+  Future<void> _fetchSavedCollections() async {
+    try {
+      final collections = await farmerDatabaseServices.getFertilizerBills(widget.farmerId);
+      setState(() {
+        savedCollections = collections;
+      });
+    } catch (e) {
+      print("Error fetching collections: $e");
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+
+  void _calculateTotal() {
+    double amount = double.tryParse(_amountController.text) ?? 0.0;
+    double price = double.tryParse(_priceController.text) ?? 0.0;
+    setState(() {
+      _calculatedTotal = amount * price;
+    });
+  }
   void _showAddFertilizerDialog() {
     showDialog(
       context: context,
@@ -32,50 +100,29 @@ class _BillingScreenState extends State<BillingScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Dropdown for selecting fertilizer type
-                // DropdownButton<String>(
-                //   value: dropdownValue,
-                //   icon: const Icon(Icons.arrow_downward),
-                //   elevation: 16,
-                //   style: const TextStyle(color: Colors.deepPurple),
-                //   underline: Container(
-                //     height: 2,
-                //     color: Colors.deepPurpleAccent,
-                //   ),
-                //   onChanged: (String? value) {
-                //     // Called when the user selects an item.
-                //     setState(() {
-                //       dropdownValue = value!; // Update the dropdownValue
-                //     });
-                //   },
-                //   items: list.map<DropdownMenuItem<String>>((String value) {
-                //     return DropdownMenuItem<String>(
-                //       value: value,
-                //       child: Text(value),
-                //     );
-                //   }).toList(),
-                // ),
-                 DropdownButtonFormField<String>(
-                      value: selectedGrade,
-                      items: ['A', 'B', 'C']
-                          .map((grade) => DropdownMenuItem(
-                                value: grade,
-                                child: Text(grade),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedGrade = value!;
-                        
-                        });
-                      },),
-                SizedBox(height: 10),
-                // Display selected fertilizer type
-                Text(
-                  'Selected Fertilizer: $dropdownValue',
+                TextFormField(
+                  controller: _dateController,
+                  decoration: InputDecoration(labelText: 'Date'),
+                  readOnly: true,
+                  onTap: () => _selectDate(context),
                 ),
                 SizedBox(height: 10),
-                // Text field for amount
+                DropdownButtonFormField<String>(
+                  hint: Text("select fertilizer"),
+                  value: selectedfertilizer,
+                  items: ['A', 'B', 'C']
+                      .map((grade) => DropdownMenuItem(
+                            value: grade,
+                            child: Text(grade),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedfertilizer = value!;
+                    });
+                  },
+                ),
+                SizedBox(height: 10),
                 TextField(
                   controller: _amountController,
                   decoration: InputDecoration(
@@ -83,9 +130,9 @@ class _BillingScreenState extends State<BillingScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  onChanged: (_) => _calculateTotal(),
                 ),
                 SizedBox(height: 10),
-                // Text field for price
                 TextField(
                   controller: _priceController,
                   decoration: InputDecoration(
@@ -93,35 +140,63 @@ class _BillingScreenState extends State<BillingScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  onChanged: (_) => _calculateTotal(),
                 ),
                 SizedBox(height: 10),
-                // Display calculated total
                 Text('Total: \$${_calculatedTotal.toStringAsFixed(2)}'),
               ],
             ),
           ),
           actions: [
-            // Calculate total action
-            TextButton(
-              onPressed: () {
-                double amount = double.tryParse(_amountController.text) ?? 0.0;
-                double price = double.tryParse(_priceController.text) ?? 0.0;
-                setState(() {
-                  _calculatedTotal = amount * price;
-                });
+            ElevatedButton(
+              child: Text('Submit'),
+              onPressed: () async {
+                try {
+                  if (selectedfertilizer == null ||
+                      selectedfertilizer!.isEmpty) {
+                    _showAlertDialog("Please select a vegetable.", false);
+                    return;
+                  }
+                  // Call the backend function with your form data
+                  await farmerDatabaseServices.addFertilizerBill(
+                      widget.farmerId,
+                      selectedfertilizer!,
+                      _priceController.text,
+                      _amountController.text,
+                      _dateController.text );
+
+                  // Show Snackbar on successful submission
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Successfully updated!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+
+                  // Clear input fields after successful submission
+                  _clear();
+
+                  // Fetch the updated list of saved collections
+                  _fetchSavedCollections();
+
+                  // Dismiss the dialog
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  // Show error message if something goes wrong
+                  _showAlertDialog("Failed to update: $e", false);
+                }
               },
-              child: Text('Calculate Total'),
             ),
             TextButton(
               onPressed: () {
-                // Clear all input fields and selections
                 setState(() {
-                  dropdownValue = 'One'; // Reset dropdown value to default
                   _amountController.clear();
                   _priceController.clear();
+                  _dateController.text =
+                      DateFormat('yyyy-MM-dd').format(DateTime.now());
                   _calculatedTotal = 0.0;
                 });
-                Navigator.of(context).pop();  // Close the dialog
+                Navigator.of(context).pop();
               },
               child: Text('Cancel'),
             ),
@@ -133,14 +208,9 @@ class _BillingScreenState extends State<BillingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve arguments passed to the screen
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final id = args['id'];
-    final name = args['name'];
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('$name'),
+        title: Text('${widget.farmerName}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -150,7 +220,7 @@ class _BillingScreenState extends State<BillingScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Daily Collection',
+                  'Fertilizer Bill',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.black,
@@ -159,10 +229,75 @@ class _BillingScreenState extends State<BillingScreen> {
                 ),
                 ElevatedButton.icon(
                   onPressed: _showAddFertilizerDialog,
-                  label: Icon(Icons.add),
-                  style: ButtonStyle(),
+                  icon: Icon(Icons.add),
+                  label: Text('Create'),
                 ),
               ],
+            ),
+
+             Expanded(
+              child: ListView.builder(
+                itemCount: savedCollections.length,
+                itemBuilder: (context, index) {
+                  var collection = savedCollections[index];
+                  String docId = collection['id'] ??
+                      ''; // Assuming you are storing the document ID in the collection
+
+                  return Dismissible(
+                    key: Key(docId),
+                    direction: DismissDirection
+                        .endToStart, // Only swipe from right to left
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onDismissed: (direction) {
+                      farmerDatabaseServices.deleteDailyCollectionData(
+                          widget.farmerId, docId);
+                      setState(() {
+                        savedCollections
+                            .removeAt(index); // Remove from list as well
+                      });
+                    },
+                    child: Card(
+                      margin: EdgeInsets.symmetric(vertical: 8.0),
+                      child: ListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Gtext(
+                                text: '${collection['purchasedate']}',
+                                tsize: 16,
+                                tcolor: Colors.black,
+                                fweight: FontWeight.bold),
+                            Gtext(
+                                text:
+                                    '${collection['type']} - ${collection['amount']} kg',
+                                tsize: 16,
+                                tcolor: Colors.black,
+                                fweight: FontWeight.w500),
+                          ],
+                        ),
+                        subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Gtext(
+                                text: 'Price: Rs.${collection['price']}',
+                                tsize: 16,
+                                tcolor: Colors.black,
+                                fweight: FontWeight.w500),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),

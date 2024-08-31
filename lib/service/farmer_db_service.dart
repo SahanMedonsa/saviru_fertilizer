@@ -36,4 +36,71 @@ class FarmerDatabaseServices {
   void deletefarmer(String farmerId) {
     _faremerRef.doc(farmerId).delete();
   }
+
+   Future<void> addFertilizerBill(
+      String farmerId, String type, String price, String amount, String dateTime) async {
+    try {
+      // Reference to the "fertilizer bill" sub-collection
+      CollectionReference fertilizerBill = _firestore
+          .collection('farmer')
+          .doc(farmerId)
+          .collection('fertilizer bill');
+
+      // Add a new document to the "fertilizer bill" sub-collection
+      await fertilizerBill.add({
+        'type': type,
+        'price': double.parse(price),
+        'amount': double.parse(amount),
+        'purchasedate': dateTime,
+      });
+
+      print('Fertilizer bill added successfully');
+    } catch (e) {
+      print('Error adding fertilizer bill: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getFertilizerBills(String farmerId) async {
+  List<Map<String, dynamic>> fertilizerBillList = [];
+
+  try {
+    CollectionReference fertilizerBill = _firestore
+        .collection('farmer')
+        .doc(farmerId)
+        .collection('fertilizer bill');
+
+    QuerySnapshot querySnapshot = await fertilizerBill.get();
+
+    for (var doc in querySnapshot.docs) {
+      fertilizerBillList.add({
+        'id': doc.id, // Add the document ID to the map
+        ...doc.data() as Map<String, dynamic>
+      });
+    }
+
+    print('Fertilizer bills retrieved successfully');
+  } catch (e) {
+    print('Error retrieving fertilizer bills: $e');
+  }
+
+  return fertilizerBillList;
+}
+
+ Future<void> deleteDailyCollectionData(String farmerId, String docId) async {
+    try {
+      // Reference to the daily collection document to delete
+      CollectionReference dailyCollection = _firestore
+          .collection('farmer')
+          .doc(farmerId)
+          .collection('fertilizer bill');
+
+      // Delete the specified document using its ID
+      await dailyCollection.doc(docId).delete();
+
+      print('Daily Collection data deleted successfully');
+    } catch (e) {
+      print('Error deleting daily collection data: $e');
+    }
+  }
+
 }
