@@ -48,9 +48,24 @@ class ProductCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Gtextfd(text: "Name : "),
-                      Gtextfd(text: "Astock (kg): "),
-                      Gtextfd(text: "Price (1kg) : "),
+                      Row(
+                        children: [
+                          Gtextfd(text: "Name : "),
+                          Gtextfd(text: productName),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Gtextfd(text: "Astock (kg): "),
+                          Gtextfd(text: stockAmount), 
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Gtextfd(text: "Price (1kg) : "),
+                           Gtextfd(text: pricePerKg), 
+                        ],
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -59,9 +74,9 @@ class ProductCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Gtextfd(text: productName), // Use productName parameter
-                      Gtextfd(text: stockAmount),  // Use stockAmount parameter
-                      Gtextfd(text: pricePerKg),    // Use pricePerKg parameter
+                       // Use productName parameter
+                       // Use stockAmount parameter
+                        // Use pricePerKg parameter
                     ],
                   ),
                 ],

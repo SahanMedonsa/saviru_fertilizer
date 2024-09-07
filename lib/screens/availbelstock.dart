@@ -62,12 +62,15 @@ class AvailableStockList extends StatelessWidget {
                         imagePath: "assets/pngwing.com (2).png",
                         productName: "Dolomite",
                         stockAmount: "${stock.dolomite}",
-                        pricePerKg: ""),
+                        pricePerKg: "210.23"),
                     ProductCard(
                         imagePath: "assets/pngwing.com (2).png",
                         productName: "KIE",
                         stockAmount: "${stock.kie}",
-                        pricePerKg: ""),
+                        pricePerKg: "321.00"),
+                        
+
+                        
                   ],
                 );
               },
