@@ -58,17 +58,34 @@ class AvailableStockList extends StatelessWidget {
 
                 return Column(
                   children: [
-                    ProductCard(
-                        imagePath: "assets/pngwing.com (2).png",
-                        productName: "Dolomite",
-                        stockAmount: "${stock.dolomite}",
-                        pricePerKg: "210.23"),
-                    ProductCard(
-                        imagePath: "assets/pngwing.com (2).png",
+                     ProductCard(
+                        imagePath: "assets/NPK.JPG",
                         productName: "KIE",
                         stockAmount: "${stock.kie}",
-                        pricePerKg: "321.00"),
-                        
+                        pricePerKg: "1000.00"),
+                     ProductCard(
+                        imagePath: "assets/MOP.JPG",
+                        productName: "MOP",
+                        stockAmount: "${stock.mop}",
+                        pricePerKg: "3200.00"),
+                    ProductCard(
+                        imagePath: "assets/Dolomite.JPG",
+                        productName: "Dolomite",
+                        stockAmount: "${stock.dolomite}",
+                        pricePerKg: "1210.23"),
+                        ProductCard(
+                        imagePath: "assets/TSP.JPG",
+                        productName: "Vege ferti",
+                        stockAmount: "${stock.tsp}",
+                        pricePerKg: "10021.00"),
+                    ProductCard(
+                        imagePath: "assets/pngwing.com (2).png",
+                        productName: "Vege ferti",
+                        stockAmount: "${stock.vegetableFertilizer}",
+                        pricePerKg: "10021.00"),
+
+
+
 
                         
                   ],
